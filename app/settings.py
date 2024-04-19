@@ -60,6 +60,7 @@ class AppSettings(BaseSettings):
     FAKE_USERS: list[FakeUser] = parse_fake_users_settings(
         filepath=os.path.join(APP_PATH, 'fake-users.tsv'),
     )
+    SESSIONS_PATH: str = os.path.join(APP_PATH, 'sessions')
 
 
 app_settings = AppSettings(

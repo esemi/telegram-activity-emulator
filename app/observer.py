@@ -22,7 +22,7 @@ async def welcome(message: types.Message) -> None:
     selected_users: list[FakeUser] = random.sample(app_settings.FAKE_USERS, users_sample_size)
 
     for user in selected_users:
-        await db_pool.publish(app_settings.REDIS_CHANNEL_NAME, f'{user.phone}:{message.id}')
+        await db_pool.publish(app_settings.REDIS_CHANNEL_NAME, f'{user.phone}:{message.message_id}')
     logger.info('pushed {0} random users from pool'.format(len(selected_users)))
 
 
