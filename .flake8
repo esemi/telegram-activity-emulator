@@ -1,0 +1,39 @@
+[flake8]
+max-line-length = 125
+max-module-members = 7
+
+ignore =
+    # Missing parameter(s) in Docstring
+    DAR101,
+
+    # Missing "Returns" in Docstring
+    DAR201,
+
+    # Missing exception(s) in Raises section
+    DAR401,
+
+    # Found overused expression
+    WPS204,
+
+    #  Found too long ``try`` body length
+    WPS229,
+
+    # F-strings is OK
+    WPS305,
+
+    # Found class without a base class - dataclass used
+    WPS306,
+
+    # Found `%` string formatting - simple logging format
+    WPS323,
+
+    # Found walrus operator
+    WPS332,
+
+    # Standard pseudo-random generators are not suitable for security/cryptographic purposes is OK for the project
+    S311,
+
+
+per-file-ignores =
+    #  WPS432   Found magic number - ok for settings
+    epsa_farm/settings.py: WPS432,
