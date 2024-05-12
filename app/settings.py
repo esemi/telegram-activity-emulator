@@ -1,4 +1,5 @@
 """Application settings."""
+import hashlib
 import os
 from dataclasses import dataclass
 
@@ -19,6 +20,7 @@ class FakeUser:
     phone: str
     api_id: int
     api_hash: str
+    name: str
 
 
 def parse_fake_users_settings(filepath: str) -> list[FakeUser]:
@@ -29,10 +31,15 @@ def parse_fake_users_settings(filepath: str) -> list[FakeUser]:
         results = []
         for row in fd.readlines():
             values = row.split('\t')
+            unique_name = hashlib.md5(
+                string='{0}_{1}'.format(values[1].strip()[:6], values[2].strip()[:30]).encode(),
+            ).hexdigest()
+
             results.append(FakeUser(
                 phone=values[0].strip(),
                 api_id=int(values[1].strip()),
                 api_hash=values[2].strip(),
+                name=unique_name,
             ))
         return results
 

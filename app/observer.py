@@ -24,7 +24,7 @@ async def welcome(message: types.Message) -> None:
     for user in selected_users:
         await db_pool.publish(
             app_settings.REDIS_CHANNEL_NAME,
-            f'{message.chat.id}:{user.phone}:{message.message_id}',
+            f'{message.chat.id}:{user.name}:{message.message_id}',
         )
     logger.info('pushed {0} random users from pool'.format(len(selected_users)))
 

@@ -37,6 +37,7 @@ async def main() -> None:
 
         logger.info('catch message {0}'.format(message))
         chat_id, user_name, message_id = message['data'].split(':')
+
         async with Client(workdir=app_settings.SESSIONS_PATH, name=user_name) as fake_user_app:
             await asyncio.sleep(random.randint(2, 8))
             await _increment_views(int(chat_id), int(message_id), fake_user_app)
