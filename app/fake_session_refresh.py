@@ -6,7 +6,6 @@ from pyrogram import Client
 from app.settings import app_settings
 
 logger = logging.getLogger(__file__)
-uvloop.install()
 
 
 async def main() -> None:
@@ -21,9 +20,9 @@ async def main() -> None:
 
         is_authorized = await fake_user_app.connect()
         if not is_authorized:
-            logger.info('refresh {0} session'.format(user.phone))
+            logger.info('refresh {0} session'.format(user))
             await fake_user_app.authorize()
-
+        del fake_user_app
 
 if __name__ == '__main__':
     logging.basicConfig(

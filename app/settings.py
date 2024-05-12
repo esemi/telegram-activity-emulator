@@ -2,7 +2,8 @@
 import os
 from dataclasses import dataclass
 
-from pydantic import RedisDsn, Field
+import uvloop
+from pydantic import Field, RedisDsn
 from pydantic_settings import BaseSettings
 
 APP_PATH = os.path.abspath(
@@ -29,9 +30,9 @@ def parse_fake_users_settings(filepath: str) -> list[FakeUser]:
         for row in fd.readlines():
             values = row.split('\t')
             results.append(FakeUser(
-                phone=values[0],
-                api_id=int(values[1]),
-                api_hash=values[2],
+                phone=values[0].strip(),
+                api_id=int(values[1].strip()),
+                api_hash=values[2].strip(),
             ))
         return results
 
@@ -40,6 +41,7 @@ class AppSettings(BaseSettings):
     """Application settings class."""
 
     REDIS_DSN: RedisDsn = Field(default='redis://localhost/1')
+    REDIS_TIMEOUT: float = 10.
     REDIS_CHANNEL_NAME: str = 'channel:activity-emulator'
     OBSERVER_BOT_TOKEN: str
     OBSERVED_CHANNEL_ID: int
@@ -47,16 +49,11 @@ class AppSettings(BaseSettings):
         default=90,
         description='Процент фейк-пользователей, реагирующих на пост, относительно всей популяции',
     )
-    FAKE_USERS_REACTIONS: set[str] = {
-        '❤️',
-        '😏',
-        '🤞',
-        '✍',
-        '️🕺',
-        '️🧡',
-        '💛',
+    FAKE_USERS_REACTIONS: list[str] = [
+        '❤',
+        '️👍',
         '🔥',
-    }
+    ]
     FAKE_USERS: list[FakeUser] = parse_fake_users_settings(
         filepath=os.path.join(APP_PATH, 'fake-users.tsv'),
     )
@@ -66,3 +63,4 @@ class AppSettings(BaseSettings):
 app_settings = AppSettings(
     _env_file=os.path.join(APP_PATH, '.env'),  # type:ignore
 )
+uvloop.install()
