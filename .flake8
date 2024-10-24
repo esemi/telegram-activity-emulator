@@ -3,6 +3,15 @@ max-line-length = 125
 max-module-members = 7
 
 ignore =
+    # Missing docstring in public module
+    D100,
+
+    # Missing docstring in public class
+    D101,
+
+    # Missing docstring in public function
+    D103,
+
     # Missing parameter(s) in Docstring
     DAR101,
 

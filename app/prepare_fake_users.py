@@ -39,9 +39,9 @@ async def _process_fake_user_session(fake_user_app: Client) -> None:
     except UserAlreadyParticipant:
         pass
 
-    channel = await fake_user_app.resolve_peer(int(app_settings.OBSERVED_CHANNEL_ID))
+    channel = await fake_user_app.resolve_peer(app_settings.OBSERVED_CHANNEL_ID)
     mute_request = UpdateNotifySettings(
-        peer=InputNotifyPeer(peer=channel),
+        peer=InputNotifyPeer(peer=channel),  # type: ignore
         settings=InputPeerNotifySettings(mute_until=MUTE_TTL),
     )
     await fake_user_app.invoke(mute_request)

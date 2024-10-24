@@ -56,6 +56,10 @@ class AppSettings(BaseSettings):
     REDIS_DSN: RedisDsn = Field(default='redis://localhost/1')
     REDIS_TIMEOUT: float = Field(default=10)
     REDIS_CHANNEL_NAME: str = 'channel:activity-emulator'
+
+    EMULATOR_ACTION_THROTTLING_MIN: int = 2
+    EMULATOR_ACTION_THROTTLING_MAX: int = 16
+
     OBSERVER_BOT_TOKEN: str
     OBSERVED_CHANNEL_ID: int
     OBSERVED_CHANNEL_INVITE_LINK: str
@@ -76,10 +80,23 @@ class AppSettings(BaseSettings):
         default=60,
         description='Максимальный процент реакций относительно просмотров',
     )
-    FAKE_USERS_REACTIONS: list[str] = [
+
+    AVAILABLE_REACTIONS: list[str] = [
         '❤',
         '️👍',
         '🔥',
+        '🎉',
+        '🤩',
+        '😁',
+        '🤯',
+        '🤔',
+        '👏',
+        '🫡',
+        '🤝',
+        '👌',
+        '🫡',
+        '🌚',
+        '🍾',
     ]
     FAKE_USERS: list[FakeUser] = parse_fake_users_settings(
         filepath=os.path.join(APP_PATH, 'fake-users.tsv'),
