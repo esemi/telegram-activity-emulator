@@ -20,6 +20,7 @@ class FakeUser:
     phone: str
     api_id: int
     api_hash: str
+    two_fa: str
     name: str
 
 
@@ -28,38 +29,74 @@ def parse_fake_users_settings(filepath: str) -> list[FakeUser]:
         raise RuntimeError('Create {0} file first'.format(filepath))
 
     with open(filepath, mode='r') as fd:
-        results = []
+        users = []
         for row in fd.readlines():
-            values = row.split('\t')
+            user_props = row.split('\t')
             unique_name = hashlib.md5(
-                string='{0}_{1}'.format(values[1].strip()[:6], values[2].strip()[:30]).encode(),
+                string='{0}_{1}'.format(
+                    user_props[1].strip()[:6],
+                    user_props[2].strip()[:30],
+                ).encode(),
+                usedforsecurity=False,
             ).hexdigest()
 
-            results.append(FakeUser(
-                phone=values[0].strip(),
-                api_id=int(values[1].strip()),
-                api_hash=values[2].strip(),
+            users.append(FakeUser(
+                phone=user_props[0].strip(),
+                api_id=int(user_props[1].strip()),
+                api_hash=user_props[2].strip(),
+                two_fa=user_props[3].strip(),
                 name=unique_name,
             ))
-        return results
+        return users
 
 
 class AppSettings(BaseSettings):
     """Application settings class."""
 
     REDIS_DSN: RedisDsn = Field(default='redis://localhost/1')
-    REDIS_TIMEOUT: float = 10.
+    REDIS_TIMEOUT: float = Field(default=10)
     REDIS_CHANNEL_NAME: str = 'channel:activity-emulator'
+
+    EMULATOR_ACTION_THROTTLING_MIN: int = 2
+    EMULATOR_ACTION_THROTTLING_MAX: int = 16
+
     OBSERVER_BOT_TOKEN: str
     OBSERVED_CHANNEL_ID: int
-    FAKE_USERS_PER_POST: int = Field(
-        default=90,
-        description='Процент фейк-пользователей, реагирующих на пост, относительно всей популяции',
+    OBSERVED_CHANNEL_INVITE_LINK: str
+
+    MIN_VIEWS_PERCENT: int = Field(
+        default=70,
+        description='Минимальный процент просмотров относительно всей популяции',
     )
-    FAKE_USERS_REACTIONS: list[str] = [
+    MAX_VIEWS_PERCENT: int = Field(
+        default=95,
+        description='Максимальный процент просмотров относительно всей популяции',
+    )
+    MIN_REACTIONS_PERCENT: int = Field(
+        default=30,
+        description='Минимальный процент реакций относительно просмотров',
+    )
+    MAX_REACTIONS_PERCENT: int = Field(
+        default=60,
+        description='Максимальный процент реакций относительно просмотров',
+    )
+
+    AVAILABLE_REACTIONS: list[str] = [
         '❤',
         '️👍',
         '🔥',
+        '🎉',
+        '🤩',
+        '😁',
+        '🤯',
+        '🤔',
+        '👏',
+        '🫡',
+        '🤝',
+        '👌',
+        '🫡',
+        '🌚',
+        '🍾',
     ]
     FAKE_USERS: list[FakeUser] = parse_fake_users_settings(
         filepath=os.path.join(APP_PATH, 'fake-users.tsv'),
