@@ -20,6 +20,7 @@ class FakeUser:
     phone: str
     api_id: int
     api_hash: str
+    two_fa: str
     name: str
 
 
@@ -39,6 +40,7 @@ def parse_fake_users_settings(filepath: str) -> list[FakeUser]:
                 phone=values[0].strip(),
                 api_id=int(values[1].strip()),
                 api_hash=values[2].strip(),
+                two_fa=values[3].strip(),
                 name=unique_name,
             ))
         return results
@@ -48,10 +50,11 @@ class AppSettings(BaseSettings):
     """Application settings class."""
 
     REDIS_DSN: RedisDsn = Field(default='redis://localhost/1')
-    REDIS_TIMEOUT: float = 10.
+    REDIS_TIMEOUT: float = Field(default=10)
     REDIS_CHANNEL_NAME: str = 'channel:activity-emulator'
     OBSERVER_BOT_TOKEN: str
     OBSERVED_CHANNEL_ID: int
+    OBSERVED_CHANNEL_INVITE_LINK: str
     FAKE_USERS_PER_POST: int = Field(
         default=90,
         description='Процент фейк-пользователей, реагирующих на пост, относительно всей популяции',

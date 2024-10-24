@@ -13,7 +13,7 @@ poetry install
 
 ### Run fake-users session authorization checking
 ```shell
-poetry run python -m app.fake_session_refresh
+poetry run python -m app.prepare_fake_users
 ```
 
 ### Run observer bot

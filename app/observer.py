@@ -17,6 +17,10 @@ dp = Dispatcher()
 @dp.channel_post(F.chat.id == app_settings.OBSERVED_CHANNEL_ID)
 async def welcome(message: types.Message) -> None:
     logger.info('new post activity! {0}'.format(message.message_id))
+
+    # todo select users for views
+    # todo select users for views+reaction
+
     users_pool_available = len(app_settings.FAKE_USERS)
     users_sample_size: int = math.floor(users_pool_available / 100 * app_settings.FAKE_USERS_PER_POST)
     selected_users: list[FakeUser] = random.sample(app_settings.FAKE_USERS, max(1, users_sample_size))
