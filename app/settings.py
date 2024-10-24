@@ -29,21 +29,25 @@ def parse_fake_users_settings(filepath: str) -> list[FakeUser]:
         raise RuntimeError('Create {0} file first'.format(filepath))
 
     with open(filepath, mode='r') as fd:
-        results = []
+        users = []
         for row in fd.readlines():
-            values = row.split('\t')
+            user_props = row.split('\t')
             unique_name = hashlib.md5(
-                string='{0}_{1}'.format(values[1].strip()[:6], values[2].strip()[:30]).encode(),
+                string='{0}_{1}'.format(
+                    user_props[1].strip()[:6],
+                    user_props[2].strip()[:30],
+                ).encode(),
+                usedforsecurity=False,
             ).hexdigest()
 
-            results.append(FakeUser(
-                phone=values[0].strip(),
-                api_id=int(values[1].strip()),
-                api_hash=values[2].strip(),
-                two_fa=values[3].strip(),
+            users.append(FakeUser(
+                phone=user_props[0].strip(),
+                api_id=int(user_props[1].strip()),
+                api_hash=user_props[2].strip(),
+                two_fa=user_props[3].strip(),
                 name=unique_name,
             ))
-        return results
+        return users
 
 
 class AppSettings(BaseSettings):
@@ -55,9 +59,22 @@ class AppSettings(BaseSettings):
     OBSERVER_BOT_TOKEN: str
     OBSERVED_CHANNEL_ID: int
     OBSERVED_CHANNEL_INVITE_LINK: str
-    FAKE_USERS_PER_POST: int = Field(
-        default=90,
-        description='Процент фейк-пользователей, реагирующих на пост, относительно всей популяции',
+
+    MIN_VIEWS_PERCENT: int = Field(
+        default=70,
+        description='Минимальный процент просмотров относительно всей популяции',
+    )
+    MAX_VIEWS_PERCENT: int = Field(
+        default=95,
+        description='Максимальный процент просмотров относительно всей популяции',
+    )
+    MIN_REACTIONS_PERCENT: int = Field(
+        default=30,
+        description='Минимальный процент реакций относительно просмотров',
+    )
+    MAX_REACTIONS_PERCENT: int = Field(
+        default=60,
+        description='Максимальный процент реакций относительно просмотров',
     )
     FAKE_USERS_REACTIONS: list[str] = [
         '❤',

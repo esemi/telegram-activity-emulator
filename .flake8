@@ -12,8 +12,8 @@ ignore =
     # Missing exception(s) in Raises section
     DAR401,
 
-    # Found overused expression
-    WPS204,
+    # Found upper-case constant in a class
+    WPS115
 
     #  Found too long ``try`` body length
     WPS229,
@@ -30,10 +30,18 @@ ignore =
     # Found walrus operator
     WPS332,
 
+    # Found wrong keyword: pass
+    WPS420,
+
     # Standard pseudo-random generators are not suitable for security/cryptographic purposes is OK for the project
     S311,
 
 
 per-file-ignores =
-    #  WPS432   Found magic number - ok for settings
-    epsa_farm/settings.py: WPS432,
+    # WPS112 Found private name pattern: __stop_request
+    # WPS347 Found vague import that may cause confusion: F
+    # WPS432 Found magic number
+
+    app/emulator.py: WPS112,
+    app/observer.py: WPS347,
+    app/settings.py: WPS432,
