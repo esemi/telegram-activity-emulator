@@ -31,9 +31,13 @@ async def main() -> None:
             logger.warning('stop by request')
             break
 
-        if event := await pop_event():
-            logger.info('catch message {0}'.format(event))
-            await _process_event(*event)
+        try:
+            if event := await pop_event():
+                logger.info('catch message {0}'.format(event))
+                await _process_event(*event)
+                logger.info('event processed')
+        except Exception as exc:
+            logger.warning('processing error {0}'.format(exc))
 
     logger.info('emulator stopped')
 

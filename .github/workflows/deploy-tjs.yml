@@ -1,0 +1,55 @@
+name: deploy-tjs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: deploy-tjs
+      cancel-in-progress: true
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.1
+      - uses: actions/setup-python@v5.0.0
+        with:
+          python-version: '3.12'
+
+      - name: deploy
+        uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+        env:
+          TARGET_DIR: /home/${{ secrets.SSH_USERNAME_TJS }}
+          VENV_BIN: venv/bin
+        with:
+          host: ${{ secrets.SSH_HOST_TJS }}
+          user: ${{ secrets.SSH_USERNAME_TJS }}
+          pass: ${{ secrets.SSH_PASSWORD_TJS }}
+          port: 22
+          connect_timeout: 10s
+          first_ssh: |-
+            mkdir -p app
+            mkdir -p logs
+            mkdir -p sessions
+            test -d venv || python3.12 -m venv venv
+            touch .env
+            touch fake-users.tsv
+
+          scp: |-
+            './app/*' => $TARGET_DIR/app/
+            ./poetry.lock => $TARGET_DIR
+            ./pyproject.toml => $TARGET_DIR
+
+          last_ssh: |-
+            source $VENV_BIN/activate 
+            pip install --no-cache-dir poetry pip setuptools --upgrade
+            poetry install --only main --no-root
+            pip cache purge
+            echo 'OBSERVED_CHANNEL_ID=${{ secrets.OBSERVED_CHANNEL_ID }}' > .env
+            echo 'OBSERVER_BOT_TOKEN="${{ secrets.OBSERVER_BOT_TOKEN }}"' >> .env
+            echo 'OBSERVED_CHANNEL_INVITE_LINK="${{ secrets.OBSERVED_CHANNEL_INVITE_LINK }}"' >> .env
+            supervisorctl restart telegram-activity:*
