@@ -1,5 +1,9 @@
-WIP: telegram-activity-emulator
+Telegram activity emulator
 ---
+
+[![linters](https://github.com/esemi/telegram-activity-emulator/actions/workflows/linters.yml/badge.svg?branch=master)](https://github.com/esemi/telegram-activity-emulator/actions/workflows/linters.yml)
+
+An automated system designed to simulate organic user activity around your Telegram channel, enhancing engagement metrics through realistic interactions like views, reactions, and message exchanges.
 
 
 ### Pre-requirements
@@ -18,6 +22,15 @@ pip install -U --no-cache-dir poetry pip setuptools
 poetry install
 ```
 
+Create env file to override default config
+```shell
+cat > .env << EOF
+OBSERVER_BOT_TOKEN="68123456324:AAG_k3xRJSDHSJDSJKkww53P5Jr-DdDdDd"
+OBSERVED_CHANNEL_ID="-1002078951125"
+OBSERVED_CHANNEL_INVITE_LINK="https://t.me/+1FKK6Yr_sDdSfdS"
+EOF
+```
+
 ### Run fake-users session authorization checking
 ```shell
 poetry run python -m app.prepare_fake_users
@@ -31,32 +44,4 @@ poetry run python -m app.observer
 ### Run emulator bot
 ```shell
 poetry run python -m app.emulator
-```
-
-### Host setup
-```shell
-apt-get update
-apt-get install software-properties-common
-add-apt-repository ppa:deadsnakes/ppa
-apt install supervisor python3.12 python3.12-venv redis
-
-curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
-
-python3.12 -m pip install --upgrade setuptools
-
-groupadd supervisor
-usermod -a -G supervisor root
-vi /etc/supervisor/supervisord.conf  # change chown and chmod params
-service supervisor restart
-
-adduser -q telegram-activity
-usermod -a -G supervisor telegram-activity
-
-cp etc/supervisor-example.conf /etc/supervisor/conf.d/telegram-activity.conf
-
-# run deploy from github actions
-poetry run python -m app.prepare_fake_users
-service supervisor restart
-
-# repeat deploy from github actions
 ```
