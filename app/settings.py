@@ -57,15 +57,15 @@ class AppSettings(BaseSettings):
     REDIS_TIMEOUT: float = Field(default=10)
     REDIS_CHANNEL_NAME: str = 'channel:activity-emulator'
 
-    EMULATOR_ACTION_THROTTLING_MIN: int = 2
-    EMULATOR_ACTION_THROTTLING_MAX: int = 16
+    EMULATOR_ACTION_THROTTLING_MIN: int = 5
+    EMULATOR_ACTION_THROTTLING_MAX: int = 36
 
     OBSERVER_BOT_TOKEN: str
     OBSERVED_CHANNEL_ID: int
     OBSERVED_CHANNEL_INVITE_LINK: str
 
     MIN_VIEWS_PERCENT: int = Field(
-        default=70,
+        default=73,
         description='Минимальный процент просмотров относительно всей популяции',
     )
     MAX_VIEWS_PERCENT: int = Field(
@@ -83,17 +83,19 @@ class AppSettings(BaseSettings):
 
     AVAILABLE_REACTIONS: list[str] = [
         '❤',
-        '️👍',
+        '❤',
+        '❤',
+        '❤',
         '🔥',
+        '🔥',
+        '🔥',
+        '️👍',
+        '️👍',
         '🎉',
         '🤩',
         '😁',
-        '🤯',
         '🤔',
         '👏',
-        '🫡',
-        '🤝',
-        '👌',
         '🫡',
         '🌚',
         '🍾',
